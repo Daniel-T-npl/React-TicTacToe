@@ -74,6 +74,24 @@ body {
   background: #1f661f;
 }
 
+.reset {
+  background: #5a0a80;
+  border: 5px solid #356ad4;
+  float: left;
+  font-size: 50px;
+  font-weight: bold;
+  line-height: 34px;
+  margin-left: 170px;
+  margin-top: -1px;
+  padding: 0;
+  text-align: center;
+  width: 170px;
+  height: 70px;
+}
+
+.reset:hover {
+  background: #c31d7e;
+}
 
 .board-row:after {
   clear: both;
@@ -82,6 +100,7 @@ body {
 }
 
 .status {
+  font-size: 100px;
   margin-bottom: 10px;
 }
 .game {
