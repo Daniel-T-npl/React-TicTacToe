@@ -110,5 +110,18 @@ body {
 
 .game-info {
   margin-left: 20px;
+  button {
+    padding: 2px;
+    font-size: 16px;
+    cursor: pointer;
+    background-color: #0f4811; /* Green */
+    color: white;
+    border: none;
+    border-radius: 5px;
+    border: 1px solid #8f2323;
+  }
+}
+.game {
+  background-color: antiquewhite;
 }
  

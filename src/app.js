@@ -1,7 +1,6 @@
 import { useState } from 'react';
 
 function Square({val, setSquares}) {
-
   return (
     <button className="square" onClick={setSquares}>
       {val}
@@ -9,17 +8,13 @@ function Square({val, setSquares}) {
   );
 }
 
-export default function Board() {
-
-  const [squares, setSquares] = useState(Array(9).fill(null));
-  const [turn, setTurn] = useState(true);
+function Board({turn, squares, play}) {
 
   function handleClick(n) {
     if (squares[n] || CalculateWin(squares)) return;
     const newSquares = squares.slice();
     newSquares[n] = turn ? 'X' : 'O';
-    setTurn(!turn);
-    setSquares(newSquares);
+    play(newSquares);
   }
 
   const winner = CalculateWin(squares);
@@ -51,11 +46,6 @@ export default function Board() {
         <Square val={squares[8]} setSquares={()=>handleClick(8)}/>
         <Square val={squares[9]} setSquares={()=>handleClick(9)}/>
       </div>
-      <button className="reset"
-        onClick={() => {setSquares(Array(9).fill(null)) 
-        setTurn(true)}}>
-        Reset 
-      </button>
     </>
   );
 }
@@ -79,4 +69,47 @@ function CalculateWin(squares) {
     }
   }
   return null;
+}
+
+
+export default function Game() {
+
+  const [history, setHistory] = useState([Array(9).fill(null)]);
+  const [currentMove, setCurrentMove] = useState(0);
+  const currentSquares = history[currentMove];
+  const turn = currentMove % 2 === 0;
+
+  function handlePlay(nextSquares) {
+    const nextHistory = [...history.slice(0, currentMove + 1), nextSquares];
+    setHistory(nextHistory);
+    setCurrentMove(nextHistory.length - 1);
+  }
+
+  function jumpTo(nextMove) {
+    setCurrentMove(nextMove);
+  }
+
+  const moves = history.map((squares, move) => {
+    let text = (move>0) ? 'Go to move #' + move : 'Go to start';
+    return (
+      <li key={move}> 
+        <button onClick={() => jumpTo(move)}>
+          {text}
+        </button>
+      </li>
+    );
+  });
+
+  return (
+    <div className="game">
+      <div className="game-board">
+        <Board turn={turn} squares={currentSquares} play={handlePlay}/>
+      </div>
+      <div className="game-info">
+        <ol>
+          {moves}
+        </ol>
+      </div>
+    </div>
+  );
 }
