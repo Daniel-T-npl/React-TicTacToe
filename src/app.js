@@ -20,10 +20,10 @@ function Board({turn, squares, play}) {
   const winner = CalculateWin(squares);
   let status;
   if (winner) {
-    status = 'Winner: ' + winner;
+    winner === 'draw' ? status = 'Draw!' : status = 'Winner: ' + winner;
   }
   else {
-    status = 'Next player: ' + (turn ? 'X' : 'O');
+    status = 'Next Move: ' + (turn ? 'X' : 'O');
   }
 
   return (
@@ -32,19 +32,19 @@ function Board({turn, squares, play}) {
         {status}
       </div>
       <div className="board-row">
+        <Square val={squares[0]} setSquares={()=>handleClick(0)}/>
         <Square val={squares[1]} setSquares={()=>handleClick(1)}/>
         <Square val={squares[2]} setSquares={()=>handleClick(2)}/>
-        <Square val={squares[3]} setSquares={()=>handleClick(3)}/>
       </div>
       <div className="board-row">
+        <Square val={squares[3]} setSquares={()=>handleClick(3)}/>
         <Square val={squares[4]} setSquares={()=>handleClick(4)}/>
         <Square val={squares[5]} setSquares={()=>handleClick(5)}/>
-        <Square val={squares[6]} setSquares={()=>handleClick(6)}/>
       </div>
       <div className="board-row">
+        <Square val={squares[6]} setSquares={()=>handleClick(6)}/>
         <Square val={squares[7]} setSquares={()=>handleClick(7)}/>
         <Square val={squares[8]} setSquares={()=>handleClick(8)}/>
-        <Square val={squares[9]} setSquares={()=>handleClick(9)}/>
       </div>
     </>
   );
@@ -52,23 +52,28 @@ function Board({turn, squares, play}) {
 
 function CalculateWin(squares) {
   const winlines = [
-    [1, 2, 3],
-    [4, 5, 6],
-    [7, 8, 9],
+    [0, 1, 2],
+    [3, 4, 5],
+    [6, 7, 8],
+    [0, 3, 6],
     [1, 4, 7],
     [2, 5, 8],
-    [3, 6, 9],
-    [1, 5, 9],
-    [3, 5, 7]
+    [0, 4, 8],
+    [2, 4, 6]
   ];
 
   for (let i = 0; i < winlines.length; i++) {
     const [a, b, c] = winlines[i];
     if (squares[a] && squares[a] === squares[b] && squares[a] === squares[c]) {
       return squares[a];
+     }
+  }
+  for (let i = 0; i < 9; i++) {
+    if(!squares[i]) {
+      return null
     }
   }
-  return null;
+  return('draw');
 }
 
 
@@ -101,15 +106,77 @@ export default function Game() {
   });
 
   return (
-    <div className="game">
-      <div className="game-board">
-        <Board turn={turn} squares={currentSquares} play={handlePlay}/>
+    <>
+      <div>
+        <div className="game-board">
+          <Board turn={turn} squares={currentSquares} play={handlePlay}/>
+        </div>
+        <Bot currentSquares={currentSquares} CalculateWin={CalculateWin} currrentMove={currentMove} turn={turn} handlePlay={handlePlay}/>
       </div>
       <div className="game-info">
         <ol>
           {moves}
         </ol>
       </div>
-    </div>
+    </>
+  );
+}
+
+function Bot({currentSquares, CalculateWin, currentMove, turn, handlePlay}) {
+  function MakeMove() {
+    const nextMove = BestMove(currentSquares, turn ? 'X' : 'O');
+    if (nextMove) {
+      handlePlay(nextMove);
+    }
+  }
+
+  function BestMove(board, xo) {
+    let bestScore = -Infinity;
+    let move = null;
+
+    for (let i = 0; i < 9; i++) {
+      if (board[i] === null) {
+        const newBoard = board.slice();
+        newBoard[i] = xo;
+        const score = BestScore(newBoard, false, xo);
+        if (score > bestScore) {
+          bestScore = score;
+          move = newBoard;
+        }
+      }
+    }
+    return move;
+  }
+
+  function BestScore(board, botTurn, xoBot) {
+    const winner = CalculateWin(board);
+    if (winner) {
+      if (winner === xoBot) return 10;
+      if (winner === 'draw') return 0;
+      return -10;
+    }
+
+    const nextPlayer = botTurn ? xoBot : (xoBot === 'X' ? 'O' : 'X');
+    let bestScore = botTurn ? -Infinity : Infinity;
+
+    for (let i = 0; i < 9; i++) {
+      if (board[i] === null) {
+        const newBoard = board.slice();
+        newBoard[i] = nextPlayer;
+        const score = BestScore(newBoard, !botTurn, xoBot);
+        if (botTurn) {
+          bestScore = Math.max(score, bestScore);
+        } else {
+          bestScore = Math.min(score, bestScore);
+        }
+      }
+    }
+    return bestScore;
+  }
+
+  return (
+    <button className="bot" onClick={MakeMove}>
+      Bot Move
+    </button>
   );
 }
