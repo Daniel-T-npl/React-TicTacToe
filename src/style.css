@@ -4,61 +4,18 @@
 
 body {
   font-family: sans-serif;
-  margin: 20px;
+  margin: 0;
   padding: 0;
-}
-
-h1 {
-  margin-top: 0;
-  font-size: 22px;
-}
-
-h2 {
-  margin-top: 0;
-  font-size: 20px;
-}
-
-h3 {
-  margin-top: 0;
-  font-size: 18px;
-}
-
-h4 {
-  margin-top: 0;
-  font-size: 16px;
-}
-
-h5 {
-  margin-top: 0;
-  font-size: 14px;
-}
-
-h6 {
-  margin-top: 0;
-  font-size: 12px;
-}
-
-code {
-  font-size: 1.2em;
-}
-
-ul {
-  padding-inline-start: 20px;
-}
-
-* {
-  box-sizing: border-box;
-}
-
-body {
-  font-family: sans-serif;
-  margin: 20px;
-  padding: 0;
+  background-color: #CEE5F2;
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
 .square {
-  background: #A24936;
-  border: 5px solid #282B28;
+  background: #7C98B3;
+  border: 5px solid #637081 ;
   float: left;
   font-size: 120px;
   font-weight: bold;
@@ -69,11 +26,11 @@ body {
   text-align: center;
   width: 170px;
   height: 170px;
+
 }
 .square:hover {
-  background: #D36135;
+  background: #ACCBE1 ;
 }
-
 
 .board-row:after {
   clear: both;
@@ -82,9 +39,13 @@ body {
 }
 
 .status {
-  font-size: 70px;
+  font-size: 50px;
+  font-family:Verdana, Geneva, Tahoma, sans-serif;
   margin-bottom: 10px;
-  margin-left: 25px;
+  padding: 5px;
+  border-radius : 10px;
+  background-color: #ACCBE1;
+  justify-self: center;
 }
 .game {
   display: flex;
@@ -92,22 +53,48 @@ body {
 }
 
 .game-info {
-  margin-left: 160px;
+  justify-self: center;
+  
   button {
-    padding: 2px;
-    font-size: 16px;
+    padding: 4px;
+    font-size: 32px;
     cursor: pointer;
-    background-color: #83BCA9; 
-    color: #282B28;
+    background: #7C98B3;
+    border: 5px solid #637081 ; 
+    color: black;
     border: none;
     border-radius: 5px;
     border: 1px solid #3E5641;
+    margin-left: 4px;
   }
 }
 .game-info button:hover {
-  background-color: #3E5641;
+  background-color: #ACCBE1;
 }
-.game {
-  background-color: antiquewhite;
+
+.bot {
+  align-items: center;
+  justify-content: center;
+  justify-self: right;
+  margin-top: 4px;
+  button {
+    width: 50px;
+    font-size: 40px;
+    border-radius: 25px;
+    background-color: #7C98B3;
+    border: 2px solid #637081 ; 
+    color: black;
+    margin-right: 2px;
+  }
+  button.active {
+    background-color: #ACCBE1; 
+  }
+  button.inactive {
+    background-color: #7C98B3; 
+  }
+  button:hover {
+    background-color: #ACCBE1;
+  }
 }
+
  

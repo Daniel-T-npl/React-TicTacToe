@@ -83,6 +83,7 @@ export default function Game() {
   const [currentMove, setCurrentMove] = useState(0);
   const currentSquares = history[currentMove];
   const turn = currentMove % 2 === 0;
+  const [speak, setSpeak] = useState('');
 
   function handlePlay(nextSquares) {
     const nextHistory = [...history.slice(0, currentMove + 1), nextSquares];
@@ -94,16 +95,10 @@ export default function Game() {
     setCurrentMove(nextMove);
   }
 
-  const moves = history.map((squares, move) => {
-    let text = (move>0) ? 'Go to move #' + move : 'Go to start';
-    return (
-      <li key={move}> 
-        <button onClick={() => jumpTo(move)}>
-          {text}
-        </button>
-      </li>
-    );
-  });
+  function Speak(text) {
+    setSpeak(text);
+    setTimeout(setSpeak, 2000, '');
+  }
 
   return (
     <>
@@ -111,22 +106,41 @@ export default function Game() {
         <div className="game-board">
           <Board turn={turn} squares={currentSquares} play={handlePlay}/>
         </div>
-        <Bot currentSquares={currentSquares} CalculateWin={CalculateWin} currrentMove={currentMove} turn={turn} handlePlay={handlePlay}/>
+        <div className="bot">
+          <Bot currentSquares={currentSquares} CalculateWin={CalculateWin} 
+          currrentMove={currentMove} turn={turn} handlePlay={handlePlay} Speak={Speak}/>
+        </div>
       </div>
       <div className="game-info">
-        <ol>
-          {moves}
-        </ol>
+        <button className="Undo" onClick={() => jumpTo(currentMove - 1)} disabled={currentMove === 0}>
+          Undo
+        </button>
+        <button className="Reset" onClick={() => jumpTo(0)}>
+          Reset
+        </button>
       </div>
+      {speak}
     </>
   );
 }
 
-function Bot({currentSquares, CalculateWin, currentMove, turn, handlePlay}) {
+function Bot({currentSquares, CalculateWin, currentMove, turn, handlePlay, Speak}) {
+
+  const [botMove, setBotMove] = useState(false);
+  const [closeCall, setCloseCall] = useState(false);
+
+  if (botMove === turn) {
+    setTimeout(MakeMove, 500);
+  }
+
   function MakeMove() {
+    if (CalculateWin(currentSquares)) return;
     const nextMove = BestMove(currentSquares, turn ? 'X' : 'O');
     if (nextMove) {
       handlePlay(nextMove);
+    }
+    if(CalculateWin(nextMove)) {
+      setCloseCall(true);
     }
   }
 
@@ -175,8 +189,13 @@ function Bot({currentSquares, CalculateWin, currentMove, turn, handlePlay}) {
   }
 
   return (
-    <button className="bot" onClick={MakeMove}>
-      Bot Move
+    <>
+    <button onClick={() => setBotMove(false)} className={!botMove ? "active" : ""}>
+      O
     </button>
+    <button onClick={() => setBotMove(true)} className={botMove ? "active" : ""}>
+      X
+    </button>
+    </>
   );
 }
