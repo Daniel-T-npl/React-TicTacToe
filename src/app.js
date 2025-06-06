@@ -1,11 +1,15 @@
 import { use, useState } from 'react';
 import {useEffect} from 'react';
 
-function Square({val, setSquares}) {
-  return (
+function Square({val, setSquares, turn}) {
+
+  const move = val ? '' : (turn ? 'X' : 'O');
+
+  return (   
     <button className="square" onClick={setSquares}>
       {val}
-      </button>
+      <span class="hover-text">{move}</span>
+    </button>
   );
 }
 
@@ -33,19 +37,19 @@ function Board({turn, squares, play}) {
         {status}
       </div>
       <div className="board-row">
-        <Square val={squares[0]} setSquares={()=>handleClick(0)}/>
-        <Square val={squares[1]} setSquares={()=>handleClick(1)}/>
-        <Square val={squares[2]} setSquares={()=>handleClick(2)}/>
+        <Square turn={turn} val={squares[0]} setSquares={()=>handleClick(0)}/>
+        <Square turn={turn} val={squares[1]} setSquares={()=>handleClick(1)}/>
+        <Square turn={turn} val={squares[2]} setSquares={()=>handleClick(2)}/>
       </div>
       <div className="board-row">
-        <Square val={squares[3]} setSquares={()=>handleClick(3)}/>
-        <Square val={squares[4]} setSquares={()=>handleClick(4)}/>
-        <Square val={squares[5]} setSquares={()=>handleClick(5)}/>
+        <Square turn={turn} val={squares[3]} setSquares={()=>handleClick(3)}/>
+        <Square turn={turn} val={squares[4]} setSquares={()=>handleClick(4)}/>
+        <Square turn={turn} val={squares[5]} setSquares={()=>handleClick(5)}/>
       </div>
       <div className="board-row">
-        <Square val={squares[6]} setSquares={()=>handleClick(6)}/>
-        <Square val={squares[7]} setSquares={()=>handleClick(7)}/>
-        <Square val={squares[8]} setSquares={()=>handleClick(8)}/>
+        <Square turn={turn} val={squares[6]} setSquares={()=>handleClick(6)}/>
+        <Square turn={turn} val={squares[7]} setSquares={()=>handleClick(7)}/>
+        <Square turn={turn} val={squares[8]} setSquares={()=>handleClick(8)}/>
       </div>
     </>
   );
@@ -83,13 +87,13 @@ export default function Game() {
   const [history, setHistory] = useState([Array(9).fill(null)]);
   const [currentMove, setCurrentMove] = useState(0);
   const [closeCall, setCloseCall] = useState(false);
-  const [speak, setSpeak] = useState('');
+  const [speak, setSpeak] = useState('"CPU: "');
   const currentSquares = history[currentMove];
   const turn = currentMove % 2 === 0;
   
   function Speak(text) {
-    setSpeak(text);
-    setTimeout(setSpeak, 1000, '');
+    setSpeak('"CPU: ' + text + '"');
+    setTimeout(setSpeak, 2000, '"CPU: "');
   }
 
   function handlePlay(nextSquares) {
@@ -136,6 +140,15 @@ function Bot({currentSquares, CalculateWin, currentMove, turn, handlePlay, histo
 
   const [botMove, setBotMove] = useState(true);
   const xo = botMove ? 'O' : 'X';
+
+  useEffect(() => {
+    if (CalculateWin(currentSquares) === xo) {
+      Speak('Hahaha I won!😎');
+    }
+    else if (CalculateWin(currentSquares) === 'draw') {
+      Speak('Its a draw, Ill get you next time!🥱');
+    }
+  }, [turn]); 
 
   useEffect(() => { 
     if (botMove !== turn ) {

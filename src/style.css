@@ -26,11 +26,23 @@ body {
   text-align: center;
   width: 170px;
   height: 170px;
-
 }
 .square:hover {
   background: #ACCBE1 ;
   cursor: pointer;
+  + div {
+    display: block;
+  }
+}
+
+.hover-text {
+  /* Initially hide the hover text */
+  display: none;
+  color: #637081;
+}
+
+.square:hover .hover-text {
+  display: block;
 }
 
 .board-row:after {
