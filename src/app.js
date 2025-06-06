@@ -1,4 +1,5 @@
-import { useState } from 'react';
+import { use, useState } from 'react';
+import {useEffect} from 'react';
 
 function Square({val, setSquares}) {
   return (
@@ -81,9 +82,15 @@ export default function Game() {
 
   const [history, setHistory] = useState([Array(9).fill(null)]);
   const [currentMove, setCurrentMove] = useState(0);
+  const [closeCall, setCloseCall] = useState(false);
+  const [speak, setSpeak] = useState('');
   const currentSquares = history[currentMove];
   const turn = currentMove % 2 === 0;
-  const [speak, setSpeak] = useState('');
+  
+  function Speak(text) {
+    setSpeak(text);
+    setTimeout(setSpeak, 1500, '');
+  }
 
   function handlePlay(nextSquares) {
     const nextHistory = [...history.slice(0, currentMove + 1), nextSquares];
@@ -92,12 +99,7 @@ export default function Game() {
   }
 
   function jumpTo(nextMove) {
-    setCurrentMove(nextMove);
-  }
-
-  function Speak(text) {
-    setSpeak(text);
-    setTimeout(setSpeak, 2000, '');
+    (nextMove>=0) ? setCurrentMove(nextMove) : setCurrentMove(0);
   }
 
   return (
@@ -106,32 +108,46 @@ export default function Game() {
         <div className="game-board">
           <Board turn={turn} squares={currentSquares} play={handlePlay}/>
         </div>
+        <div className="bot-info">
+          Bot is playing as
+        </div>
         <div className="bot">
           <Bot currentSquares={currentSquares} CalculateWin={CalculateWin} 
-          currrentMove={currentMove} turn={turn} handlePlay={handlePlay} Speak={Speak}/>
+          currentMove={currentMove} turn={turn} handlePlay={handlePlay}
+          history={history} Speak={Speak}/>
         </div>
       </div>
       <div className="game-info">
-        <button className="Undo" onClick={() => jumpTo(currentMove - 1)} disabled={currentMove === 0}>
+        <button className="Undo" onClick={() => jumpTo(currentMove - 2)} disabled={currentMove === 0}>
           Undo
         </button>
         <button className="Reset" onClick={() => jumpTo(0)}>
           Reset
         </button>
       </div>
-      {speak}
+      <div className="bot-text">
+        {speak}
+      </div>
     </>
   );
 }
 
-function Bot({currentSquares, CalculateWin, currentMove, turn, handlePlay, Speak}) {
+function Bot({currentSquares, CalculateWin, currentMove, turn, handlePlay, history, Speak}) {
 
-  const [botMove, setBotMove] = useState(false);
-  const [closeCall, setCloseCall] = useState(false);
+  const [botMove, setBotMove] = useState(true);
+  const xo = botMove ? 'O' : 'X';
 
-  if (botMove === turn) {
-    setTimeout(MakeMove, 500);
-  }
+  useEffect(() => { 
+    if (botMove !== turn ) {
+      setTimeout(MakeMove, 500);
+      const a = BotCanWin(history[currentMove >= 1? currentMove - 1 : 0]);
+      console.log(history);
+      console.log(a);
+      if (a) {
+        Speak('You blocked me😡');
+    }
+    }
+  }, [turn])
 
   function MakeMove() {
     if (CalculateWin(currentSquares)) return;
@@ -139,10 +155,21 @@ function Bot({currentSquares, CalculateWin, currentMove, turn, handlePlay, Speak
     if (nextMove) {
       handlePlay(nextMove);
     }
-    if(CalculateWin(nextMove)) {
-      setCloseCall(true);
-    }
   }
+
+  function BotCanWin(board) {
+    console.log(xo);
+    for (let i = 0; i < 9; i++) {
+      if (board[i] === null) {
+        const testBoard = board.slice();
+        testBoard[i] = xo;
+        if (CalculateWin(testBoard) === xo) {
+          return true;
+        }
+      }
+    }
+    return false;
+  }  
 
   function BestMove(board, xo) {
     let bestScore = -Infinity;
@@ -190,10 +217,10 @@ function Bot({currentSquares, CalculateWin, currentMove, turn, handlePlay, Speak
 
   return (
     <>
-    <button onClick={() => setBotMove(false)} className={!botMove ? "active" : ""}>
+    <button onClick={() => setBotMove(true)} className={botMove ? "active" : ""}>
       O
     </button>
-    <button onClick={() => setBotMove(true)} className={botMove ? "active" : ""}>
+    <button onClick={() => setBotMove(false)} className={!botMove ? "active" : ""}>
       X
     </button>
     </>

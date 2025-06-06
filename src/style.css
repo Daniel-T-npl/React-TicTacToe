@@ -6,7 +6,7 @@ body {
   font-family: sans-serif;
   margin: 0;
   padding: 0;
-  background-color: #CEE5F2;
+  background-color: #010e15;
   min-height: 100vh;
   display: flex;
   justify-content: center;
@@ -30,6 +30,7 @@ body {
 }
 .square:hover {
   background: #ACCBE1 ;
+  cursor: pointer;
 }
 
 .board-row:after {
@@ -47,6 +48,21 @@ body {
   background-color: #ACCBE1;
   justify-self: center;
 }
+
+.bot-text {
+  font-size: 30px;
+  color: #ACCBE1;
+  justify-self: center;
+}
+
+.bot-info {
+  padding-top: 4px;
+  font-size: 15px;
+  color: #ACCBE1;
+  justify-self: right;
+}
+
+
 .game {
   display: flex;
   flex-direction: row;
@@ -95,6 +111,8 @@ body {
   button:hover {
     background-color: #ACCBE1;
   }
+  
 }
+
 
  
