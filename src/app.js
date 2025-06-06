@@ -89,7 +89,7 @@ export default function Game() {
   
   function Speak(text) {
     setSpeak(text);
-    setTimeout(setSpeak, 1500, '');
+    setTimeout(setSpeak, 1000, '');
   }
 
   function handlePlay(nextSquares) {
@@ -139,7 +139,7 @@ function Bot({currentSquares, CalculateWin, currentMove, turn, handlePlay, histo
 
   useEffect(() => { 
     if (botMove !== turn ) {
-      setTimeout(MakeMove, 500);
+      setTimeout(MakeMove, 750);
       const a = BotCanWin(history[currentMove >= 1? currentMove - 1 : 0]);
       console.log(history);
       console.log(a);
